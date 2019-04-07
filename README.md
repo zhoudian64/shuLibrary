@@ -16,7 +16,17 @@ pip install beautifulsoup4 flask redis requests
 
 - redis
 
-## API reference
+## 运行
+
+运行前请确保redis-server正在工作，可通过app.py中的app.config['REDIS_KWARGS']参数调整host和port（默认为127.0.0.1:6379）
+
+```shell
+python3 app.py
+# or
+python app.py
+```
+
+## API Reference
 
 ### 登录
 
@@ -33,24 +43,25 @@ pip install beautifulsoup4 flask redis requests
   }
   ```
 
-#### Response:
-​```json
+#### Response
+
+```json
 {
-​    "token": "$JWT_TOKEN"
+    "token": "$JWT_TOKEN"
 }
 ```
 
-## 借阅信息
+### 借阅信息
 
-### Request
+#### Request
 
 - method: `GET`
 - URL: `/loans`
 - Authorization: `Bearer $JWT_TOKEN`
 
-### Response:
+#### Response
 
-​```json
+```json
 {
     "loans": [
         {
@@ -62,7 +73,7 @@ pip install beautifulsoup4 flask redis requests
             "sub_library": "分馆",
             "year": "出版年(YYYY)"
         },
-        ...
+        "..."
     ]
 }
 ```
@@ -75,7 +86,7 @@ pip install beautifulsoup4 flask redis requests
 - URL: `/histories`
 - Authorization: `Bearer $JWT_TOKEN`
 
-#### Response:
+#### Response
 
 ```json
 {
@@ -90,7 +101,7 @@ pip install beautifulsoup4 flask redis requests
             "sub_library": "分馆",
             "year": "出版年(YYYY)"
         },
-        ...
+        "..."
     ]
 }
 ```
