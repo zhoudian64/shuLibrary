@@ -16,6 +16,14 @@ pip install beautifulsoup4 flask redis requests
 
 - redis
 
+## 运行
+
+```shell
+python3 app.py
+# or
+python app.py
+```
+
 ## API reference
 
 ### 登录
@@ -33,10 +41,11 @@ pip install beautifulsoup4 flask redis requests
   }
   ```
 
-#### Response:
-​```json
+#### Response
+
+```json
 {
-​    "token": "$JWT_TOKEN"
+    "token": "$JWT_TOKEN"
 }
 ```
 
@@ -48,9 +57,9 @@ pip install beautifulsoup4 flask redis requests
 - URL: `/loans`
 - Authorization: `Bearer $JWT_TOKEN`
 
-### Response:
+### Response
 
-​```json
+```json
 {
     "loans": [
         {
@@ -62,7 +71,7 @@ pip install beautifulsoup4 flask redis requests
             "sub_library": "分馆",
             "year": "出版年(YYYY)"
         },
-        ...
+        "..."
     ]
 }
 ```
@@ -75,7 +84,7 @@ pip install beautifulsoup4 flask redis requests
 - URL: `/histories`
 - Authorization: `Bearer $JWT_TOKEN`
 
-#### Response:
+#### Response
 
 ```json
 {
@@ -90,7 +99,7 @@ pip install beautifulsoup4 flask redis requests
             "sub_library": "分馆",
             "year": "出版年(YYYY)"
         },
-        ...
+        "..."
     ]
 }
 ```
