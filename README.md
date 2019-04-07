@@ -24,7 +24,7 @@ python3 app.py
 python app.py
 ```
 
-## API reference
+## API Reference
 
 ### 登录
 
@@ -49,15 +49,15 @@ python app.py
 }
 ```
 
-## 借阅信息
+### 借阅信息
 
-### Request
+#### Request
 
 - method: `GET`
 - URL: `/loans`
 - Authorization: `Bearer $JWT_TOKEN`
 
-### Response
+#### Response
 
 ```json
 {
