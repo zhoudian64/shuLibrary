@@ -19,7 +19,7 @@ class Student(object):
     _base_url = 'http://202.120.121.228:8991'
     _base_info_url = None
     _session = requests.Session()
-    _request_timeout = 5
+    _request_timeout = 8
 
     def login(self, username, password):
         try:
@@ -49,6 +49,7 @@ class Student(object):
             soup = BeautifulSoup(response.text, 'lxml')
             a = soup.find('a')
             assert isinstance(a, element.Tag)
+
             response = self._session.get(self._base_url + a['href'], timeout=self._request_timeout)
             response.raise_for_status()
             response.encoding = 'utf-8'
@@ -56,6 +57,7 @@ class Student(object):
             assert len(url_list) == 1
 
             response = self._session.get(url_list[0], timeout=self._request_timeout)
+            response.raise_for_status()
             response.encoding = 'utf-8'
             assert response.url.endswith('?func=bor-info')
             self._base_info_url = response.url[:-8]
@@ -65,65 +67,72 @@ class Student(object):
             raise ServiceUnavailable(str(e))
 
     def get_loans(self):
-        if self._base_info_url is None:
-            raise CredentialRequired()
-        result = []
-        response = self._session.get(self._base_info_url + 'bor-loan&adm_library=SHU50', timeout=self._request_timeout)
-        response.raise_for_status()
-        response.encoding = 'utf-8'
-        if '<title>PDS login</title>' in response.text:
-            raise CredentialRequired()
-        soup = BeautifulSoup(response.text, 'lxml')
-        table_list = soup.find_all('table')
-        if len(table_list) == 3:
-            tr_list = table_list[-1].find_all('tr')
-            assert len(tr_list) >= 1
-            for tr in tr_list[1:]:
-                td_list = tr.find_all('td')
-                assert len(td_list) == 10
-                checkbox = td_list[1]
-                _input = checkbox.find('input')
-                assert isinstance(_input, element.Tag)
-                author, description, year, due_date, fine, sub_library = [td.text.strip() for td in td_list[2:8]]
-                result.append({
-                    'id': _input['name'],  # ID(用于续借)
-                    'author': author,  # 著者
-                    'description': description,  # 题名
-                    'year': year,  # 出版年
-                    'due_date': due_date,  # 应还日期
-                    'fine': fine,  # 罚款
-                    'sub_library': sub_library  # 分馆
-                })
-        return result
+        try:
+            if self._base_info_url is None:
+                raise CredentialRequired('Credential required')
+            result = []
+            response = self._session.get(self._base_info_url + 'bor-loan&adm_library=SHU50',
+                                         timeout=self._request_timeout)
+            response.raise_for_status()
+            response.encoding = 'utf-8'
+            if '<title>PDS login</title>' in response.text:  # 登录过期
+                raise CredentialRequired()
+            soup = BeautifulSoup(response.text, 'lxml')
+            table_list = soup.find_all('table')
+            if len(table_list) == 3:
+                tr_list = table_list[-1].find_all('tr')
+                assert len(tr_list) >= 1
+                for tr in tr_list[1:]:
+                    td_list = tr.find_all('td')
+                    assert len(td_list) == 10
+                    checkbox = td_list[1]
+                    _input = checkbox.find('input')
+                    assert isinstance(_input, element.Tag)
+                    author, description, year, due_date, fine, sub_library = [td.text.strip() for td in td_list[2:8]]
+                    result.append({
+                        'id': _input['name'],  # ID(用于续借)
+                        'author': author,  # 著者
+                        'description': description,  # 题名
+                        'year': year,  # 出版年
+                        'due_date': due_date,  # 应还日期
+                        'fine': fine,  # 罚款
+                        'sub_library': sub_library  # 分馆
+                    })
+            return result
+        except Exception as e:
+            raise ServiceUnavailable(str(e))
 
     def get_histories(self):
-        result = []
-        if self._base_info_url is None:
-            raise CredentialRequired()
-        response = self._session.get(self._base_info_url + 'bor-history-loan&adm_library=SHU50',
-                                     timeout=self._request_timeout)
-        response.raise_for_status()
-        response.encoding = 'utf-8'
-        if '<title>PDS login</title>' in response.text:
-            raise CredentialRequired()
-        soup = BeautifulSoup(response.text, 'lxml')
-        table_list = soup.find_all('table')
-        if len(table_list) == 3:
-            tr_list = table_list[-1].find_all('tr')
-            assert len(tr_list) >= 1
-            for tr in tr_list[1:]:
-                td_list = tr.find_all('td')
-                assert len(td_list) == 10
-                author, description, year, due_date, due_hour, returned_date, returned_hour, fine, sub_library = \
-                    [td.text.strip() for td in td_list[1:]]
-                result.append({
-                    'author': author,  # 著者
-                    'description': description,  # 题名
-                    'year': year,  # 出版年
-                    'due_date': due_date,  # 应还日期
-                    'returned_date': returned_date,  # 归还日期
-                    'returned_hour': returned_hour,  # 归还时间
-                    'fine': fine,  # 罚款
-                    'sub_library': sub_library  # 分馆
-                })
-        return result
+        try:
+            if self._base_info_url is None:
+                raise CredentialRequired('Credential required')
+            result = []
+            response = self._session.get(self._base_info_url + 'bor-history-loan&adm_library=SHU50',
+                                         timeout=self._request_timeout)
+            response.raise_for_status()
+            response.encoding = 'utf-8'
+            if '<title>PDS login</title>' in response.text:  # 登录过期
+                raise CredentialRequired()
+            soup = BeautifulSoup(response.text, 'lxml')
+            table_list = soup.find_all('table')
+            if len(table_list) == 3:
+                tr_list = table_list[-1].find_all('tr')
+                assert len(tr_list) >= 1
+                for tr in tr_list[1:]:
+                    td_list = tr.find_all('td')
+                    assert len(td_list) == 10
+                    author, description, year, due_date, due_hour, returned_date, returned_hour, fine, sub_library = \
+                        [td.text.strip() for td in td_list[1:]]
+                    result.append({
+                        'author': author,  # 著者
+                        'description': description,  # 题名
+                        'year': year,  # 出版年
+                        'due_date': due_date,  # 应还日期
+                        'returned_date': returned_date,  # 归还日期
+                        'returned_hour': returned_hour,  # 归还时间
+                        'fine': fine,  # 罚款
+                        'sub_library': sub_library  # 分馆
+                    })
+            return result
+        except Exception as e:
+            raise ServiceUnavailable(str(e))
