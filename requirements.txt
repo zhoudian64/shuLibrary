@@ -1,4 +1,7 @@
-redis
-flask
+werkzeug
 beautifulsoup4
+Flask
+gunicorn
+lxml
+redis
 requests

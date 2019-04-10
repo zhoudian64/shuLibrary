@@ -28,7 +28,7 @@ def login():
         student.login(username, password)
     except InvalidCredential as error:
         abort(401, str(error))
-    g.db.set(username, pickle.dumps(student), ex=3600)
+    g.db.set('shu-library-{}'.format(username), pickle.dumps(student), ex=3600)
     return jsonify({
         'token': AuthToken().generate_jwt(username)
     })
@@ -42,7 +42,7 @@ def loans():
     token = authorization[7:]
     try:
         username = AuthToken().validate_jwt(token)
-        raw_student_data = g.db.get(username)
+        raw_student_data = g.db.get('shu-library-{}'.format(username))
         if raw_student_data is None:
             abort(403)
         student = pickle.loads(raw_student_data)
@@ -63,7 +63,7 @@ def histories():
     token = authorization[7:]
     try:
         username = AuthToken().validate_jwt(token)
-        raw_student_data = g.db.get(username)
+        raw_student_data = g.db.get('shu-library-{}'.format(username))
         if raw_student_data is None:
             abort(403)
         student = pickle.loads(raw_student_data)

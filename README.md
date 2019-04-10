@@ -7,9 +7,7 @@
 需要Python3：
 
 ```shell
-pip3 install beautifulsoup4 flask redis requests
-# or
-pip install beautifulsoup4 flask redis requests
+pip3 install -r requirements.txt
 ```
 
 ## 需要自行安装的依赖
@@ -20,10 +18,17 @@ pip install beautifulsoup4 flask redis requests
 
 运行前请确保redis-server正在工作，可通过app.py中的app.config['REDIS_KWARGS']参数调整host和port（默认为127.0.0.1:6379）
 
+### 开发环境
+
 ```shell
-python3 app.py
-# or
-python app.py
+export FLASK_APP=app
+flask run
+```
+
+### 生产环境
+
+```shell
+gunicorn -b 0.0.0.0:5000 app:app
 ```
 
 ## API Reference
