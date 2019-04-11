@@ -14,4 +14,4 @@ app.config['REDIS_KWARGS'] = {'host': os.environ['REDIS_IP'], 'port': 6379, 'db'
 app.register_blueprint(v1)
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=os.environ['PORT'], debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)

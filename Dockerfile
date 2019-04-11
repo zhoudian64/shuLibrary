@@ -1,6 +1,7 @@
 FROM python:3.8.0a3-alpine3.9
+RUN apk add gunicorn
 COPY . .
 RUN pip3 install -r requirements.txt
-EXPOSE 8000
+EXPOSE 5000
 RUN ls
-CMD python app.py
+CMD gunicorn -b 0.0.0.0:5000 app:app
