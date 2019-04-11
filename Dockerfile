@@ -1,4 +1,5 @@
 FROM python:3.8.0a3-alpine3.9
+RUN apk add gcc
 COPY . .
 RUN pip3 install -r requirements.txt
 EXPOSE 5000
